@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "ChartyDocs",
-    platforms: [.macOS(.v10_15)],
+    platforms: [.macOS(.v12)],
     products: [
         .executable(name: "ChartyDocs", targets: ["ChartyDocs"])
     ],
