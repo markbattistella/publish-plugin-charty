@@ -14,7 +14,8 @@ import Publish
 /// It mirrors the docsify-charty documentation page for page and chart for
 /// chart, so the two plugins can be compared side by side.
 struct ChartyDocs: Website {
-    var url = ProcessInfo.processInfo.environment["CHARTY_DOCS_URL"]
+    var url =
+        ProcessInfo.processInfo.environment["CHARTY_DOCS_URL"]
         .flatMap(URL.init(string:))
         ?? URL(string: "https://charty.publish.markbattistella.com")!
     var name = "publish-plugin-charty"
