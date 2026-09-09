@@ -168,6 +168,8 @@ without the styling.
 
 `Docs/` is a small Publish site covering every chart type:
 
+[View the live documentation and chart gallery](https://markbattistella.github.io/publish-plugin-charty/).
+
 ```sh
 cd Docs && swift run ChartyDocs
 ```

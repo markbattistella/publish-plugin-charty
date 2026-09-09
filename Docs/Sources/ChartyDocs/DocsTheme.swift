@@ -53,6 +53,7 @@ private struct DocsHTMLFactory: HTMLFactory {
                 ),
                 .div(.class("prose"), .contentBody(item.body)),
                 pager(
+                    site: context.site,
                     previous: position.flatMap { $0 > 0 ? charts[$0 - 1] : nil },
                     next: position.flatMap { $0 < charts.count - 1 ? charts[$0 + 1] : nil }
                 ),
@@ -107,8 +108,8 @@ private extension DocsHTMLFactory {
                 .title(title == context.site.name ? title : "\(title) · Charty"),
                 .description(context.site.description),
                 .viewport(.accordingToDevice),
-                .stylesheet("/docs.css"),
-                .chartyStylesheet()
+                .stylesheet(context.site.path(to: "docs.css")),
+                .chartyStylesheet(at: Path(context.site.path(to: "charty.css")))
             ),
             .body(
                 .a(.class("skip"), .href("#main"), .text("Skip to content")),
@@ -127,7 +128,7 @@ private extension DocsHTMLFactory {
             .class("sidebar"),
             .a(
                 .class("brand"),
-                .href("/"),
+                .href(context.site.path()),
                 .span(.class("brand__name"), .text("Charty")),
                 .span(.class("brand__kind"), .text("for Publish"))
             ),
@@ -143,7 +144,7 @@ private extension DocsHTMLFactory {
                                 .li(
                                     .a(
                                         .class(item.path == selected ? "nav__link is-current" : "nav__link"),
-                                        .href(item.path),
+                                        .href(context.site.path(to: item.path)),
                                         .text(item.title)
                                     )
                                 )
@@ -170,7 +171,7 @@ private extension DocsHTMLFactory {
                 .forEach(context.orderedCharts) { item in
                     .a(
                         .class("card"),
-                        .href(item.path),
+                        .href(context.site.path(to: item.path)),
                         .span(.class("card__group"), .text(item.metadata.group)),
                         .span(.class("card__title"), .text(item.title))
                     )
@@ -180,7 +181,7 @@ private extension DocsHTMLFactory {
     }
 
     /// Links to the previous and next chart, so the set can be read in order.
-    func pager(previous: Item<Site>?, next: Item<Site>?) -> Node<HTML.BodyContext> {
+    func pager(site: Site, previous: Item<Site>?, next: Item<Site>?) -> Node<HTML.BodyContext> {
         guard previous != nil || next != nil else { return .empty }
 
         return .nav(
@@ -189,7 +190,7 @@ private extension DocsHTMLFactory {
             previous.map { item in
                 .a(
                     .class("pager__link pager__link--previous"),
-                    .href(item.path),
+                    .href(site.path(to: item.path)),
                     .span(.class("pager__direction"), .text("Previous")),
                     .span(.class("pager__title"), .text(item.title))
                 )
@@ -197,12 +198,18 @@ private extension DocsHTMLFactory {
             next.map { item in
                 .a(
                     .class("pager__link pager__link--next"),
-                    .href(item.path),
+                    .href(site.path(to: item.path)),
                     .span(.class("pager__direction"), .text("Next")),
                     .span(.class("pager__title"), .text(item.title))
                 )
             } ?? .empty
         )
+    }
+}
+
+private extension ChartyDocs {
+    func path(to path: Path = "") -> String {
+        Path(url.path).appendingComponent(path.string).absoluteString
     }
 }
 
